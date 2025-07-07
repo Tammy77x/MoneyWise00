@@ -50,12 +50,12 @@ function SideNav() {
     //   icon: TrendingDownIcon,
     //   path: "/dashboard/debts",
     // },
-    {
-      id: 4,
-      name: "Upgrade",
-      icon: ShieldCheck,
-      path: "/dashboard/upgrade",
-    },
+   // {
+    //  id: 4,
+    //  name: "Upgrade",
+     // icon: ShieldCheck,
+      //path: "/dashboard/upgrade",
+   // },
   ];
   const path = usePathname();
 
@@ -71,7 +71,7 @@ function SideNav() {
         /> */}
       <div className="flex flex-row items-center">
         <Image src={"./chart-donut.svg"} alt="logo" width={40} height={25} />
-        <span className="text-blue-800 font-bold text-xl">FinanSmart</span>
+        <span className="text-blue-800 font-bold text-xl">MoneyWise</span>
       </div>
       <div className="mt-5">
         {menuList.map((menu, index) => (
