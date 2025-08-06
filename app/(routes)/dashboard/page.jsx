@@ -98,12 +98,13 @@ function Dashboard() {
           <h2 className="font-bold text-lg">Latest Budgets</h2>
           {budgetList?.length > 0
             ? budgetList.map((budget, index) => (
-                <BudgetItem budget={budget} key={index} />
+                <BudgetItem budget={budget} key={budget.id || index} />
               ))
             : [1, 2, 3, 4].map((item, index) => (
                 <div
-                  className="h-[180xp] w-full
+                  className="h-[180px] w-full
                  bg-slate-200 rounded-lg animate-pulse"
+                 key={index}
                 ></div>
               ))}
         </div>

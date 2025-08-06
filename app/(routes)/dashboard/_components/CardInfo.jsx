@@ -7,13 +7,15 @@ import {
   Sparkles,
   CircleDollarSign,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 function CardInfo({ budgetList, incomeList }) {
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalSpend, setTotalSpend] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
   const [financialAdvice, setFinancialAdvice] = useState("");
+  const [isFetchingAdvice, setIsFetchingAdvice] = useState(false);
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     if (budgetList.length > 0 || incomeList.length > 0) {
@@ -22,18 +24,36 @@ function CardInfo({ budgetList, incomeList }) {
   }, [budgetList, incomeList]);
 
   useEffect(() => {
-    if (totalBudget > 0 || totalIncome > 0 || totalSpend > 0) {
-      const fetchFinancialAdvice = async () => {
-        const advice = await getFinancialAdvice(
-          totalBudget,
-          totalIncome,
-          totalSpend
-        );
-        setFinancialAdvice(advice);
-      };
-
-      fetchFinancialAdvice();
+    // Clear the previous timer
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
     }
+    
+    // Set a new timer
+    debounceTimer.current = setTimeout(() => {
+      if (totalBudget > 0 || totalIncome > 0 || totalSpend > 0) {
+        console.log("Fetching financial advice with data:", { totalBudget, totalIncome, totalSpend });
+        const fetchFinancialAdvice = async () => {
+          setIsFetchingAdvice(true);
+          const advice = await getFinancialAdvice(
+            totalBudget,
+            totalIncome,
+            totalSpend
+          );
+          setFinancialAdvice(advice);
+          setIsFetchingAdvice(false);
+        };
+
+        fetchFinancialAdvice();
+      }
+    }, 1000); // Debounce for 1 second
+    
+    // Clean up the timer on unmount or when dependencies change
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
   }, [totalBudget, totalIncome, totalSpend]);
 
   const CalculateCardInfo = () => {
@@ -74,7 +94,9 @@ function CardInfo({ budgetList, incomeList }) {
                 />
               </div>
               <h2 className="font-light text-md">
-                {financialAdvice || "Loading financial advice..."}
+                {isFetchingAdvice
+                  ? "Analyzing your finances..."
+                  : financialAdvice || "Loading financial advice..."}
               </h2>
             </div>
           </div>
